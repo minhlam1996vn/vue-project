@@ -2,9 +2,10 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { API } from '@/services'
 import type { Posts } from '@/models/post/type'
-import { isAxiosError } from 'axios'
+import useHandleError from '@/composables/useHandleError'
 
 export const usePostStore = defineStore('postStore', () => {
+  const { handleError } = useHandleError()
   const posts = ref<Posts>({
     posts: [],
     total: 0,
@@ -22,24 +23,7 @@ export const usePostStore = defineStore('postStore', () => {
 
       initPosts(data)
     } catch (error) {
-      if (isAxiosError(error)) {
-        switch (error.response?.status) {
-          case 400:
-            // 400 Bad Request
-            break
-          case 404:
-            // 404 Not Found
-            break
-          case 500:
-            // 500 Internal Server Error
-            break
-          default:
-            // Other error
-            break
-        }
-      }
-
-      throw error
+      handleError(error)
     }
   }
 

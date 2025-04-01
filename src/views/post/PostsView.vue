@@ -1,29 +1,35 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import { usePostStore } from '@/stores/post'
 import type { Posts } from '@/models/post/type'
+import { useLoadingStore } from '@/stores/loading'
 
 const postStore = usePostStore()
-const listPosts = computed<Posts>(() => postStore.posts)
-const loading = ref<boolean>(false)
+const loadingStore = useLoadingStore()
 
-onMounted(async () => {
-  loading.value = true
+const listPosts = computed<Posts>(() => postStore.posts)
+
+const init = async (): Promise<void> => {
+  loadingStore.startLoading()
+
   try {
     await postStore.dispatchGetPosts()
   } catch (error) {
     console.error('Error page:', error)
   } finally {
-    loading.value = false
+    loadingStore.stopLoading()
   }
+}
+
+onMounted(async () => {
+  await init()
 })
 </script>
 
 <template>
   <div>
     <h1>List Posts</h1>
-    <p v-if="loading">Loading...</p>
-    <div v-else>
+    <div>
       <ul v-if="listPosts.posts.length">
         <li v-for="post in listPosts.posts" :key="post.id">
           {{ post.title }}
