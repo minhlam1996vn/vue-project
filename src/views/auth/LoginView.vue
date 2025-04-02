@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import useAuth from '@/composables/useAuth'
 import type { Login } from '@/models/auth/type'
 
 const router = useRouter()
-const authStore = useAuthStore()
+const { login } = useAuth()
+
 const loginForm = ref<Login>({
   email: 'test@example.com',
   password: 'password',
@@ -17,12 +18,10 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    await authStore.dispatchLogin(loginForm.value)
-
+    await login(loginForm.value)
     router.push({ name: 'home' })
   } catch (error) {
-    console.log('Login failed. Please check your credentials.')
-    console.error('Error login:', error)
+    console.error('Login failed. Please check your credentials.', error)
   } finally {
     loading.value = false
   }
@@ -42,7 +41,7 @@ const handleLogin = async () => {
         <label for="password">Password:</label>
         <input v-model="loginForm.password" type="password" id="password" required />
       </div>
-      <button type="submit">Login</button>
+      <button type="submit" :disabled="loading">Login</button>
       <p>Don't have an account? <a href="#register">Register here</a></p>
     </form>
     <p>Forgot your password? <a href="#reset-password">Reset it here</a></p>

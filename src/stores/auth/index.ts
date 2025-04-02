@@ -62,6 +62,9 @@ export const useAuthStore = defineStore('authStore', () => {
           case 500:
             // 500 Internal Server Error
             break
+          case 503:
+            // 503 Service Unavailable
+            break
           default:
             // Other error
             break
