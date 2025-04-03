@@ -7,6 +7,10 @@ export const authGuard = async (
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) => {
+  if (to.meta.routeType === 'error') {
+    return next()
+  }
+
   const { isAuthenticated, fetchUser } = useAuth()
 
   // If not authenticated, update user information

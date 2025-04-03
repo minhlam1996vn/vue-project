@@ -3,10 +3,12 @@ import { isAxiosError } from 'axios'
 import { API } from '@/services'
 import { computed, ref } from 'vue'
 import type { Login, User } from '@/models/auth/type'
+import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('authStore', () => {
   const user = ref<User | null>(null)
   const authenticated = computed<boolean>(() => user.value !== null)
+  const router = useRouter()
 
   const setUser = (userData: User | null): void => {
     user.value = userData
@@ -27,16 +29,16 @@ export const useAuthStore = defineStore('authStore', () => {
             // 400 Bad Request
             break
           case 401:
-            // 401 Unauthorized
+            router.push({ name: 'login' })
             break
           case 404:
-            // 404 Not Found
+            router.push({ name: 'notFound' })
             break
           case 500:
-            // 500 Internal Server Error
+            router.push({ name: 'serverError' })
             break
           default:
-            // Other error
+            router.push({ name: 'serviceUnavailable' })
             break
         }
       }

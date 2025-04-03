@@ -24,26 +24,41 @@ export const routes = [
   },
   {
     path: '/404',
-    name: 'not-found',
+    name: 'notFound',
     component: () => import('@/views/error/NotFoundView.vue'),
+    meta: {
+      routeType: 'error',
+    },
   },
   {
     path: '/500',
-    name: 'server-error',
+    name: 'serverError',
     component: () => import('@/views/error/ServerErrorView.vue'),
+    meta: {
+      routeType: 'error',
+    },
   },
   {
     path: '/503',
-    name: 'service-unavailable',
+    name: 'serviceUnavailable',
     component: () => import('@/views/error/ServiceUnavailableView.vue'),
+    meta: {
+      routeType: 'error',
+    },
   },
   {
     path: '/401',
     name: 'unauthorized',
     component: () => import('@/views/error/UnauthorizedView.vue'),
+    meta: {
+      routeType: 'error',
+    },
   },
   {
     path: '/:catchAll(.*)',
-    redirect: { name: 'not-found' },
+    redirect: { name: 'notFound' },
+    meta: {
+      routeType: 'error',
+    },
   },
 ]
