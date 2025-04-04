@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('authStore', () => {
       await API.auth.login(payload)
       await fetchUser()
     } catch (error) {
-      handleError(error)
+      handleError(error, [422])
       throw error
     }
   }

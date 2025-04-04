@@ -2,17 +2,17 @@ import { isAxiosError } from 'axios'
 import router from '@/router'
 
 export default function useHandleError() {
-  const handleError = (error: unknown): void => {
+  const handleError = (error: unknown, ignoreStatuses?: number[]): void => {
     if (!isAxiosError(error)) {
       console.error('Non-API error:', error)
       router.push({ name: 'serverError' })
       return
     }
 
-    switch (error.response?.status) {
-      case 422:
-        alert('Validation error occurred. Please check your input.')
-        break
+    const status = error.response?.status
+    if (status !== undefined && ignoreStatuses?.includes(status)) return
+
+    switch (status) {
       case 401:
         router.push({
           name: 'login',
