@@ -13,7 +13,12 @@ export const useAuthStore = defineStore('authStore', () => {
   }
 
   const getToken = async (): Promise<void> => {
-    await API.auth.getToken()
+    try {
+      await API.auth.getToken()
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
   }
 
   const fetchUser = async (): Promise<void> => {

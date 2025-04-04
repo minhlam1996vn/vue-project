@@ -1,23 +1,7 @@
-import { ref } from 'vue'
 import { isAxiosError } from 'axios'
 import router from '@/router'
 
-const globalError = ref<{
-  message: string | null
-  code: number | null
-}>({
-  message: null,
-  code: null,
-})
-
 export default function useHandleError() {
-  const clearError = (): void => {
-    globalError.value = {
-      message: null,
-      code: null,
-    }
-  }
-
   const handleError = (error: unknown): void => {
     if (!isAxiosError(error)) {
       console.error('Non-API error:', error)
@@ -25,17 +9,9 @@ export default function useHandleError() {
       return
     }
 
-    const status = error.response?.status
-    const message = error.response?.data || error.message
-
-    globalError.value = {
-      message,
-      code: status || 500,
-    }
-
-    switch (status) {
+    switch (error.response?.status) {
       case 422:
-        // Validation error
+        alert('Validation error occurred. Please check your input.')
         break
       case 401:
         router.push({
@@ -47,7 +23,6 @@ export default function useHandleError() {
         })
         break
       case 404:
-        console.error('Not Found:', error.response)
         router.push({ name: 'notFound' })
         break
       case 500:
@@ -63,8 +38,6 @@ export default function useHandleError() {
   }
 
   return {
-    error: globalError,
     handleError,
-    clearError,
   }
 }
