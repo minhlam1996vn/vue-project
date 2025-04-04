@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import useAuth from '@/composables/useAuth'
 import type { Login } from '@/models/auth/type'
+import useHandleError from '@/composables/useHandleError'
 
 const router = useRouter()
 const { login } = useAuth()
+const { error, clearError } = useHandleError()
 
 const loginForm = ref<Login>({
   email: 'test@example.com',
@@ -14,6 +16,10 @@ const loginForm = ref<Login>({
 
 const loading = ref<boolean>(false)
 
+onMounted(() => {
+  clearError()
+})
+
 const handleLogin = async () => {
   loading.value = true
 
@@ -21,7 +27,8 @@ const handleLogin = async () => {
     await login(loginForm.value)
     router.push({ name: 'home' })
   } catch (error) {
-    console.error('Login failed. Please check your credentials.', error)
+    console.log('loi')
+    throw error
   } finally {
     loading.value = false
   }
@@ -45,5 +52,10 @@ const handleLogin = async () => {
       <p>Don't have an account? <a href="#register">Register here</a></p>
     </form>
     <p>Forgot your password? <a href="#reset-password">Reset it here</a></p>
+
+    <div v-if="error.message" style="color: red">
+      <p>Error Code: {{ error.code }}</p>
+      <pre>{{ error.message }}</pre>
+    </div>
   </main>
 </template>

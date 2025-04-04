@@ -1,30 +1,21 @@
 // https://router.vuejs.org/guide/advanced/navigation-guards.html
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import useAuth from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/auth'
 
 export const authGuard = async (
   to: RouteLocationNormalized,
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) => {
-  if (to.meta.routeType === 'error') {
-    return next()
+  const authStore = useAuthStore()
+  const requiresAuth = to.meta.requiresAuth ?? false
+  const isErrorRoute = to.meta.routeType === 'error'
+
+  if (requiresAuth && !authStore.user && !isErrorRoute) {
+    await authStore.fetchUser()
   }
 
-  const { isAuthenticated, fetchUser } = useAuth()
-
-  // If not authenticated, update user information
-  if (!isAuthenticated.value) {
-    await fetchUser()
-  }
-
-  // If not on the login page and the user is not logged in, redirect to the login page
-  if (to.name !== 'login' && !isAuthenticated.value) {
-    return next({ name: 'login' })
-  }
-
-  // If on the login page but the user is already logged in, redirect to the home page
-  if (to.name === 'login' && isAuthenticated.value) {
+  if (to.meta.routeType === 'auth' && authStore.user) {
     return next({ name: 'home' })
   }
 

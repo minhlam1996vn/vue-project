@@ -6,30 +6,18 @@ export default function useAuth() {
   const authStore = useAuthStore()
 
   const user = computed<User | null>(() => authStore.user)
-  const isAuthenticated = computed<boolean>(() => authStore.authenticated)
+  const isAuthenticated = computed<boolean>(() => user.value !== null)
 
   const login = async (payload: Login): Promise<void> => {
-    try {
-      await authStore.dispatchLogin(payload)
-    } catch (error) {
-      throw error
-    }
+    await authStore.dispatchLogin(payload)
   }
 
   const logout = async (): Promise<void> => {
-    try {
-      await authStore.dispatchLogout()
-    } catch (error) {
-      throw error
-    }
+    await authStore.dispatchLogout()
   }
 
   const fetchUser = async (): Promise<void> => {
-    try {
-      await authStore.fetchUser()
-    } catch (error) {
-      throw error
-    }
+    await authStore.fetchUser()
   }
 
   return {
