@@ -16,7 +16,7 @@ export default function useAuth() {
     await authStore.dispatchLogout()
   }
 
-  const fetchUser = async (): Promise<void> => {
+  const refreshUser = async (): Promise<void> => {
     await authStore.fetchUser()
   }
 
@@ -25,6 +25,6 @@ export default function useAuth() {
     isAuthenticated,
     login,
     logout,
-    fetchUser,
+    refreshUser,
   }
 }

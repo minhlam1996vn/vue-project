@@ -3,11 +3,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { isAxiosError } from 'axios'
 import type { Login } from '@/models/auth/type'
-import { useAuthStore } from '@/stores/auth'
-// import useAuth from '@/composables/useAuth'
+import useAuth from '@/composables/useAuth'
 
 const router = useRouter()
-const authStore = useAuthStore()
+const { login } = useAuth()
 
 const loginForm = ref<Login>({
   email: 'test@example.com',
@@ -22,7 +21,7 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    await authStore.dispatchLogin(loginForm.value)
+    await login(loginForm.value)
 
     router.push({ name: 'home' })
   } catch (error) {
